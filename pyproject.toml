@@ -3,10 +3,10 @@ requires = ["setuptools>=64.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "template"
-description = "Template"
+name = "trajectory"
+description = "test assignment"
 version = "0.1.0"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 
 [project.optional-dependencies]
 dev = [
