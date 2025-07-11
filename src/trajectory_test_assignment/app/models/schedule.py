@@ -1,0 +1,80 @@
+from datetime import date, time
+
+from trajectory_test_assignment.app.models import Workday, TimeSlot
+from trajectory_test_assignment.app.exceptions import ScheduleDateNotFoundError
+
+
+class Schedule:
+    def __init__(self, days: list[Workday], timeslots: list[TimeSlot]):
+        self.days = days
+        self.timeslots = timeslots
+        self.day_map = {day.id_: day for day in days}
+        self.date_map = {day.date: day for day in days}
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Schedule":
+        days = [
+            Workday(
+                id_=day["id"],
+                date=day["date"],
+                start=day["start"],
+                end=day["end"],
+            )
+            for day in data["days"]
+        ]
+
+        timeslots = [
+            TimeSlot(
+                id_=ts["id"],
+                day_id=ts["day_id"],
+                start=ts["start"],
+                end=ts["end"],
+            )
+            for ts in data["timeslot"]
+        ]
+
+        return cls(days, timeslots)
+
+    def get_busy_slots(self, date: date) -> list[tuple[time, time]]:
+        if date not in self.date_map:
+            raise ScheduleDateNotFoundError(date)
+
+        day_id = self.date_map[date].id_
+        return [
+            (ts.start, ts.end) for ts in self.timeslots if ts.day_id == day_id
+        ]
+
+    def get_free_slots(self, date: date) -> list[tuple[time, time]]:
+        if date not in self.date_map:
+            raise ScheduleDateNotFoundError(date)
+
+        day = self.date_map[date]
+        busy_slots = self.get_busy_slots(date)
+
+        free_slots = []
+        current_start = day.start
+
+        for start, end in busy_slots:
+            if current_start < start:
+                free_slots.append((current_start, start))
+            current_start = end
+
+        if current_start < day.end:
+            free_slots.append((current_start, day.end))
+
+        return free_slots
+
+    def is_time_available(self, date: date, start: time, end: time) -> bool:
+        """
+        Returns True if the given time interval [start, end) is fully available (not busy) on the given date.
+        Raises ScheduleDateNotFoundError if the date is not in the schedule.
+        """
+
+        if date not in self.date_map:
+            raise ScheduleDateNotFoundError(date)
+        for busy_start, busy_end in self.get_busy_slots(date):
+            if not (end <= busy_start or start >= busy_end):
+                return False
+        day = self.date_map[date]
+
+        return day.start <= start < end <= day.end
