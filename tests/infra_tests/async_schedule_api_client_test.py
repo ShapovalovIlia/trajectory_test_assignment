@@ -1,6 +1,6 @@
 import pytest
 
-from trajectory_test_assignment.infrastructure import ScheduleAPIClient
+from trajectory_test_assignment.infrastructure import AsyncScheduleAPIClient
 
 
 @pytest.fixture
@@ -32,14 +32,14 @@ url = "https://ofc-test-01.tspb.su/test-task/"
 
 @pytest.mark.asyncio
 async def test_fetch_schedule_data_success(mock_response):
-    async with ScheduleAPIClient() as client:
+    async with AsyncScheduleAPIClient() as client:
         data = await client.fetch_schedule_data()
         assert data == mock_response
 
 
 @pytest.mark.asyncio
 async def test_fetch_schedule_data_http_error():
-    async with ScheduleAPIClient() as client:
+    async with AsyncScheduleAPIClient() as client:
         client.BASE_URL = "123"
 
         with pytest.raises(RuntimeError):
@@ -48,7 +48,7 @@ async def test_fetch_schedule_data_http_error():
 
 @pytest.mark.asyncio
 async def test_fetch_without_context_raises():
-    client = ScheduleAPIClient()
+    client = AsyncScheduleAPIClient()
 
     with pytest.raises(RuntimeError):
         await client.fetch_schedule_data()
@@ -56,7 +56,7 @@ async def test_fetch_without_context_raises():
 
 @pytest.mark.asyncio
 async def test_session_closed_after_context(mock_response):
-    client = ScheduleAPIClient()
+    client = AsyncScheduleAPIClient()
     async with client:
         data = await client.fetch_schedule_data()
 
@@ -65,7 +65,7 @@ async def test_session_closed_after_context(mock_response):
 
 @pytest.mark.asyncio
 async def test_multiple_fetches_in_context(mock_response):
-    async with ScheduleAPIClient() as client:
+    async with AsyncScheduleAPIClient() as client:
         data1 = await client.fetch_schedule_data()
         data2 = await client.fetch_schedule_data()
 
