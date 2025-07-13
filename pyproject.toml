@@ -19,5 +19,7 @@ dev = [
     "pre-commit==4.2.*",
     "pytest==8.4.*",
     "pytest-asyncio==1.0.*",
-    "==0.7.*",
 ]
+
+[project.scripts]
+trajectory = "trajectory_test_assignment.main.cli:main"

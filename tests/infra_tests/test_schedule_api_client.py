@@ -72,6 +72,6 @@ def test_fetch_schedule_data_connection_error(mock_get):
         client.fetch_schedule_data()
 
 
-def test_session_is_initialized():
+def test_session_is_initialized(mock_response_data):
     client = ScheduleAPIClient()
     assert client._session is not None  # noqa: SLF001
