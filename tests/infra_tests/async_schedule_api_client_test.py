@@ -1,4 +1,5 @@
 import pytest
+from aiohttp import ClientSession
 
 from trajectory_test_assignment.infrastructure import AsyncScheduleAPIClient
 
@@ -32,42 +33,36 @@ url = "https://ofc-test-01.tspb.su/test-task/"
 
 @pytest.mark.asyncio
 async def test_fetch_schedule_data_success(mock_response):
-    async with AsyncScheduleAPIClient() as client:
+    async with ClientSession() as session:
+        client = AsyncScheduleAPIClient(session)
         data = await client.fetch_schedule_data()
         assert data == mock_response
 
 
 @pytest.mark.asyncio
 async def test_fetch_schedule_data_http_error():
-    async with AsyncScheduleAPIClient() as client:
-        client.BASE_URL = "123"
+    async with ClientSession() as session:
+        client = AsyncScheduleAPIClient(session)
+        client.BASE_URL = "http://invalid-url"
 
         with pytest.raises(RuntimeError):
             await client.fetch_schedule_data()
 
 
 @pytest.mark.asyncio
-async def test_fetch_without_context_raises():
-    client = AsyncScheduleAPIClient()
-
-    with pytest.raises(RuntimeError):
-        await client.fetch_schedule_data()
-
-
-@pytest.mark.asyncio
-async def test_session_closed_after_context(mock_response):
-    client = AsyncScheduleAPIClient()
-    async with client:
-        data = await client.fetch_schedule_data()
-
-    assert client._session.closed  # noqa: SLF001 type: ignore
-
-
-@pytest.mark.asyncio
-async def test_multiple_fetches_in_context(mock_response):
-    async with AsyncScheduleAPIClient() as client:
+async def test_multiple_fetches_in_same_session(mock_response):
+    async with ClientSession() as session:
+        client = AsyncScheduleAPIClient(session)
         data1 = await client.fetch_schedule_data()
         data2 = await client.fetch_schedule_data()
 
         assert data1 == mock_response
         assert data2 == mock_response
+
+
+@pytest.mark.asyncio
+async def test_session_closed_after_use():
+    session = ClientSession()
+    client = AsyncScheduleAPIClient(session)
+    await session.close()
+    assert session.closed
