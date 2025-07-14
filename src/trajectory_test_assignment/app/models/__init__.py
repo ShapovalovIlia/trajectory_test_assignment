@@ -1,5 +1,5 @@
 __all__ = ["Workday", "TimeSlot", "Schedule"]
 
-from .workday import Workday
-from .time_slot import TimeSlot
-from .schedule import Schedule
+from trajectory_test_assignment.app.models.workday import Workday
+from trajectory_test_assignment.app.models.time_slot import TimeSlot
+from trajectory_test_assignment.app.models.schedule import Schedule

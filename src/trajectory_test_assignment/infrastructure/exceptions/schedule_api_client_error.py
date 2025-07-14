@@ -1,0 +1,2 @@
+class ScheduleAPIClientError(Exception):
+    pass

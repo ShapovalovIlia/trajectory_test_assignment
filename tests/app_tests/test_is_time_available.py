@@ -3,27 +3,27 @@ from datetime import date, time
 import pytest
 
 from trajectory_test_assignment.app import (
-    Schedule,
     ScheduleDateNotFoundError,
 )
+from trajectory_test_assignment.infrastructure import dict_to_schedule
 
 
 def make_schedule():
     data = {
         "days": [
             {
-                "id": 1,
-                "date": date(2025, 2, 15),
-                "start": time(9, 0),
-                "end": time(18, 0),
+                "id": "1",
+                "date": "2025-02-15",
+                "start": "09:00",
+                "end": "18:00",
             }
         ],
-        "timeslot": [
-            {"id": 1, "day_id": 1, "start": time(10, 0), "end": time(11, 0)},
-            {"id": 2, "day_id": 1, "start": time(13, 0), "end": time(14, 0)},
+        "timeslots": [
+            {"id": "1", "day_id": "1", "start": "10:00", "end": "11:00"},
+            {"id": "2", "day_id": "1", "start": "13:00", "end": "14:00"},
         ],
     }
-    return Schedule.from_dict(data)
+    return dict_to_schedule(data)
 
 
 def test_time_available_free():

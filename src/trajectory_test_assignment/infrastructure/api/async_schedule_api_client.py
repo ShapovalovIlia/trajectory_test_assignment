@@ -1,5 +1,10 @@
 from typing import Dict, Any
+
 import aiohttp
+
+from trajectory_test_assignment.infrastructure.exceptions import (
+    ScheduleAPIClientError,
+)
 
 
 class AsyncScheduleAPIClient:
@@ -15,5 +20,6 @@ class AsyncScheduleAPIClient:
             ) as response:
                 response.raise_for_status()
                 return await response.json()
+
         except aiohttp.ClientError as e:
-            raise RuntimeError(f"Ошибка получения данных с API: {e}")
+            raise ScheduleAPIClientError(f"Error fetching data from API {e}")

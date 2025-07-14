@@ -7,6 +7,7 @@ from trajectory_test_assignment.app import (
     Schedule,
     ScheduleDateNotFoundError,
 )
+from trajectory_test_assignment.infrastructure import dict_to_schedule
 
 
 @pytest.fixture
@@ -14,22 +15,22 @@ def sample_schedule_data():
     return {
         "days": [
             {
-                "id": 1,
-                "date": date(2025, 2, 15),
-                "start": time(9, 0),
-                "end": time(21, 0),
+                "id": "1",
+                "date": "2025-02-15",
+                "start": "09:00",
+                "end": "21:00",
             },
             {
-                "id": 2,
-                "date": date(2025, 2, 16),
-                "start": time(8, 0),
-                "end": time(22, 0),
+                "id": "2",
+                "date": "2025-02-16",
+                "start": "08:00",
+                "end": "22:00",
             },
         ],
-        "timeslot": [
-            {"id": 1, "day_id": 1, "start": time(9, 0), "end": time(12, 0)},
-            {"id": 2, "day_id": 1, "start": time(17, 30), "end": time(20, 0)},
-            {"id": 3, "day_id": 2, "start": time(14, 30), "end": time(18, 0)},
+        "timeslots": [
+            {"id": "1", "day_id": "1", "start": "09:00", "end": "12:00"},
+            {"id": "2", "day_id": "1", "start": "17:30", "end": "20:00"},
+            {"id": "3", "day_id": "2", "start": "14:30", "end": "18:00"},
         ],
     }
 
@@ -45,7 +46,7 @@ def sample_schedule_data():
     ],
 )
 def test_get_busy_slots(sample_schedule_data, check_date, expected):
-    schedule = Schedule.from_dict(sample_schedule_data)
+    schedule = dict_to_schedule(sample_schedule_data)
 
     assert schedule.get_busy_slots(check_date) == expected
 
@@ -53,7 +54,7 @@ def test_get_busy_slots(sample_schedule_data, check_date, expected):
 def test_get_busy_slots_empty():
     days = [
         Workday(
-            id_=3, date=date(2025, 2, 17), start=time(9, 0), end=time(18, 0)
+            id_="3", date=date(2025, 2, 17), start=time(9, 0), end=time(18, 0)
         )
     ]
     schedule = Schedule(days, [])
@@ -65,18 +66,18 @@ def test_overlapping_timeslots():
     data = {
         "days": [
             {
-                "id": 1,
-                "date": date(2025, 2, 21),
-                "start": time(9, 0),
-                "end": time(18, 0),
+                "id": "1",
+                "date": "2025-02-21",
+                "start": "09:00",
+                "end": "18:00",
             }
         ],
-        "timeslot": [
-            {"id": 1, "day_id": 1, "start": time(10, 0), "end": time(12, 0)},
-            {"id": 2, "day_id": 1, "start": time(11, 30), "end": time(13, 0)},
+        "timeslots": [
+            {"id": "1", "day_id": "1", "start": "10:00", "end": "12:00"},
+            {"id": "2", "day_id": "1", "start": "11:30", "end": "13:00"},
         ],
     }
-    schedule = Schedule.from_dict(data)
+    schedule = dict_to_schedule(data)
     result = schedule.get_busy_slots(date(2025, 2, 21))
 
     assert result == [
@@ -89,23 +90,23 @@ def test_timeslot_invalid_day_reference():
     data = {
         "days": [
             {
-                "id": 1,
-                "date": date(2025, 2, 22),
-                "start": time(9, 0),
-                "end": time(17, 0),
+                "id": "1",
+                "date": "2025-02-22",
+                "start": "09:00",
+                "end": "17:00",
             }
         ],
-        "timeslot": [
-            {"id": 1, "day_id": 99, "start": time(10, 0), "end": time(11, 0)}
+        "timeslots": [
+            {"id": "1", "day_id": "99", "start": "10:00", "end": "11:00"}
         ],
     }
-    schedule = Schedule.from_dict(data)
+    schedule = dict_to_schedule(data)
 
     assert schedule.get_busy_slots(date(2025, 2, 22)) == []
 
 
 def test_empty_schedule():
-    schedule = Schedule.from_dict({"days": [], "timeslot": []})
+    schedule = dict_to_schedule({"days": [], "timeslots": []})
 
     with pytest.raises(ScheduleDateNotFoundError):
         schedule.get_busy_slots(date(2025, 2, 15))

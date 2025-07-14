@@ -8,43 +8,36 @@ class Schedule:
     def __init__(self, days: list[Workday], timeslots: list[TimeSlot]):
         self.days = days
         self.timeslots = timeslots
-        self.day_map = {day.id_: day for day in days}
         self.date_map = {day.date: day for day in days}
 
-    @classmethod
-    def from_dict(cls, data: dict) -> "Schedule":
-        days = [
-            Workday(
-                id_=day["id"],
-                date=day["date"],
-                start=day["start"],
-                end=day["end"],
-            )
-            for day in data["days"]
-        ]
-
-        timeslots = [
-            TimeSlot(
-                id_=ts["id"],
-                day_id=ts["day_id"],
-                start=ts["start"],
-                end=ts["end"],
-            )
-            for ts in data["timeslot"]
-        ]
-
-        return cls(days, timeslots)
-
     def get_busy_slots(self, date: date) -> list[tuple[time, time]]:
+        """
+        Returns the list of occupied time intervals for the given date.
+
+        :param date: Date to retrieve busy slots for.
+        :raises ScheduleDateNotFoundError: If the date is not present in the schedule.
+        :return: List of (start, end) tuples representing busy intervals.
+        """
         if date not in self.date_map:
             raise ScheduleDateNotFoundError(date)
 
         day_id = self.date_map[date].id_
-        return [
-            (ts.start, ts.end) for ts in self.timeslots if ts.day_id == day_id
-        ]
+        return sorted(
+            [
+                (ts.start, ts.end)
+                for ts in self.timeslots
+                if ts.day_id == day_id
+            ]
+        )
 
     def get_free_slots(self, date: date) -> list[tuple[time, time]]:
+        """
+        Returns the list of free time intervals for the given date.
+
+        :param date: Date to retrieve free slots for.
+        :raises ScheduleDateNotFoundError: If the date is not present in the schedule.
+        :return: List of (start, end) tuples representing free intervals.
+        """
         if date not in self.date_map:
             raise ScheduleDateNotFoundError(date)
 
@@ -72,9 +65,11 @@ class Schedule:
 
         if date not in self.date_map:
             raise ScheduleDateNotFoundError(date)
+
         for busy_start, busy_end in self.get_busy_slots(date):
             if not (end <= busy_start or start >= busy_end):
                 return False
+
         day = self.date_map[date]
 
         return day.start <= start < end <= day.end
