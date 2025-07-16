@@ -9,9 +9,9 @@ This project is licensed under the Personal Use License. See the [LICENSE](LICEN
   - [Using pip](#using-pip)
   - [Using Docker](#using-docker)
 - [🛠️ Commands](#%EF%B8%8F-commands)
-  - [Create NATS Streams](#create-nats-streams)
-  - [Run Message Consumer](#run-message-consumer)
-  - [Run Task Scheduler](#run-task-scheduler)
+  - [Get busy slots](#get-busy-slots)
+  - [Get free slots](#get-free-slots)
+  - [Is time available](#is-time-avaliable)
 
 ## 🚀 Installation
 
@@ -61,7 +61,7 @@ trajectory-cli get-busy-slots --date YYYY-MM-DD
 trajectory-cli get-free-slots --date YYYY-MM-DD
 ```
 
-### Get free slots for your date
+### Is time available
 
 ```bash
 trajectory-cli is-time-available  --date YYYY-MM-DD --start-time HH:MM --end-time HH:MM
