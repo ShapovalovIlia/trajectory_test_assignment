@@ -1,3 +1,4 @@
+import traceback
 from datetime import date, time
 from typing import Annotated
 
@@ -5,6 +6,8 @@ from aiohttp import ClientSession
 from rich import print
 from cyclopts import Parameter, Token
 
+
+from trajectory_test_assignment.app import ScheduleDateNotFoundError
 from trajectory_test_assignment.infrastructure import (
     AsyncScheduleAPIClient,
     dict_to_schedule,
@@ -25,9 +28,14 @@ async def get_busy_slots(
     async with ClientSession() as session:
         async_scheduale_api_client = AsyncScheduleAPIClient(session)
         data = await async_scheduale_api_client.fetch_schedule_data()
-
         schedule = dict_to_schedule(data)
-        busy_slots = schedule.get_busy_slots(date)
+
+        try:
+            busy_slots = schedule.get_busy_slots(date)
+        except ScheduleDateNotFoundError as e:
+            print(f"[red]Error:[/red] {e}")
+            return
+
         busy_slots.sort()
 
         for slot in busy_slots:
@@ -42,7 +50,13 @@ async def get_free_slots(
         data = await async_scheduale_api_client.fetch_schedule_data()
 
         schedule = dict_to_schedule(data)
-        free_slots = schedule.get_free_slots(date)
+
+        try:
+            free_slots = schedule.get_free_slots(date)
+        except ScheduleDateNotFoundError as e:
+            print(f"[red]Error:[/red] {e}")
+            return
+
         free_slots.sort()
         for slot in free_slots:
             print(f"Free slots: {slot[0]} - {slot[1]} on {date.isoformat()}")
@@ -60,9 +74,14 @@ async def is_time_available(
         data = await async_scheduale_api_client.fetch_schedule_data()
 
         schedule = dict_to_schedule(data)
-        is_time_available = schedule.is_time_available(
-            date, start_time, end_time
-        )
+
+        try:
+            is_time_available = schedule.is_time_available(
+                date, start_time, end_time
+            )
+        except ScheduleDateNotFoundError as e:
+            print(f"[red]Error:[/red] {e}")
+            return
 
         if is_time_available:
             print("The specified time slot is available.")
