@@ -1,8 +1,3 @@
-
-## 📜 License
-
-This project is licensed under the Personal Use License. See the [LICENSE](LICENSE) file for details.
-
 ## 📚 Table of Contents
 
 - [🚀 Installation](#-installation)
