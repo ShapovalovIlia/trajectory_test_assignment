@@ -10,7 +10,7 @@ This project is licensed under the Personal Use License. See the [LICENSE](LICEN
   - [Using Docker](#using-docker)
 - [🛠️ Commands](#%EF%B8%8F-commands)
   - [Get busy slots](#get-busy-slots-for-your-date)
-  - [Get free slots](#get-free-slots)
+  - [Get free slots](#get-free-slots-for-your-date)
   - [Is time available](#is-time-avaliable)
 
 ## 🚀 Installation
