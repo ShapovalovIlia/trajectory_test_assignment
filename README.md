@@ -1,18 +1,68 @@
-# Тестовое задание Траектория
-Дан график занятости работника, состоящий из:
 
-расписания рабочего дня (days)
-и времени заявок (timeslot).
-Нужно реализовать следующий функционал:
+## 📜 License
 
-Найти все занятые промежутки для указанной даты.
-Найти свободное время для заданной даты.
-Вывести доступен ли заданный промежуток времени для заданной даты.
-(*) Сделать функцию, которая найдет для указанной продолжительности заявки свободное время в графике.
-Формат аргументов:
+This project is licensed under the Personal Use License. See the [LICENSE](LICENSE) file for details.
 
-Дата - гггг-дд-мм
-Время - ЧЧ:ММ
-Данные по графику можно получить через эндпоинт: GET https://ofc-test-01.tspb.su/test-task/
+## 📚 Table of Contents
 
-Нужно реализовать решение задачи на Python 3.6+. Написать юнит-тесты для проверки функционала, а также небольшое описание по их запуску. Добавить обработку ошибок.
+- [🚀 Installation](#-installation)
+  - [Using pip](#using-pip)
+  - [Using Docker](#using-docker)
+- [🛠️ Commands](#%EF%B8%8F-commands)
+  - [Create NATS Streams](#create-nats-streams)
+  - [Run Message Consumer](#run-message-consumer)
+  - [Run Task Scheduler](#run-task-scheduler)
+
+## 🚀 Installation
+
+### Using pip
+
+1. Create and activate a virtual environment:
+   ```bash
+   python3 -m venv .venv
+   source ./.venv/bin/activate
+   ```
+
+2. Install dependencies:
+
+   **For development:**
+   ```bash
+   pip install -e ".[dev]"
+   ```
+
+   **For production:**
+   ```bash
+   pip install -e .
+   ```
+
+### Using Docker
+
+1. Build Docker image:
+
+   ```bash
+   docker build -t trajectory-cli:latest .
+   ```
+
+## 🛠️ Commands
+
+```bash
+connect-four create-nats-streams <nats_url>
+```
+
+### Get busy slots for your date
+
+```bash
+trajectory-cli get-busy-slots --date YYYY-MM-DD
+```
+
+### Get free slots for your date
+
+```bash
+trajectory-cli get-free-slots --date YYYY-MM-DD
+```
+
+### Get free slots for your date
+
+```bash
+trajectory-cli is-time-available  --date YYYY-MM-DD --start-time HH:MM --end-time HH:MM
+```
