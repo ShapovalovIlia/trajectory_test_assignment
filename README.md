@@ -35,29 +35,25 @@
 1. Build Docker image:
 
    ```bash
-   docker build -t trajectory-cli:latest .
+   docker build -t trajectory:latest .
    ```
 
 ## 🛠️ Commands
 
-```bash
-connect-four create-nats-streams <nats_url>
-```
-
 ### Get busy slots for your date
 
 ```bash
-trajectory-cli get-busy-slots --date YYYY-MM-DD
+trajectory get-busy-slots --date YYYY-MM-DD
 ```
 
 ### Get free slots for your date
 
 ```bash
-trajectory-cli get-free-slots --date YYYY-MM-DD
+trajectory get-free-slots --date YYYY-MM-DD
 ```
 
 ### Is time available
 
 ```bash
-trajectory-cli is-time-available  --date YYYY-MM-DD --start-time HH:MM --end-time HH:MM
+trajectory is-time-available  --date YYYY-MM-DD --start-time HH:MM --end-time HH:MM
 ```
